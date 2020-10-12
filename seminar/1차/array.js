@@ -81,8 +81,8 @@ console.log('sum =', sum);
 var serverPart = ['윤가영', '최예진', '류세화', '이수진', '석영현'];
 let serverIndexStr = '서버파트 여러분 번호 한 번 세겠습니다. "';
 
-for(let item in serverPart){
-  serverIndexStr += item + '! ';
+for(let idx in serverPart){
+  serverIndexStr += idx + '! ';
 }
 console.log(serverIndexStr);
 
