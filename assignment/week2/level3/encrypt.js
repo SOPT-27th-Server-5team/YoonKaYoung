@@ -1,6 +1,6 @@
 const fs = require('fs');
 const crypto = require('crypto');
-
+  
 const salt = crypto.randomBytes(64).toString(); //동기인데여
 
 fs.readFile('./mypassword.txt', (err, data) => {
