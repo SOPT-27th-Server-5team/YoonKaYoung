@@ -6,9 +6,10 @@ const { User, Post, Like } = require('../models');
 module.exports = {
   createPost: async (req, res) => {
     const { userId, title, contents } = req.body;
+    const postImageUrl = req.file.location;
     try {
-      const user = await User.findOne({ where: { id: userId }});
-      const post = await Post.create({ title, contents });
+      const user = await User.findOne({ id: userId }); //왜 where을 하면 안되는걸깜.
+      const post = await Post.create({ title, contents, postImageUrl });
       await user.addPost(post);
       return res.status(sc.OK).send(ut.success(sc.OK, rm.CREATE_POST_SUCCESS, post));
     } catch (err) {
