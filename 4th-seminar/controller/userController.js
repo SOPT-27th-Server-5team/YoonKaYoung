@@ -129,13 +129,65 @@ module.exports = {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.READ_USER_ALL_FAIL));
     }
   },
-//   deleteUser : async (req, res) => {
-//     const { userId } = req.params;
-//     try {
-//       const 
-//     }
-//   },
-//   updateUser : async (req, res) => {
+  deleteUser : async (req, res) => {
+    const { id } = req.params;
+    try {
+      await User.destroy({
+        where: {
+          id : id,
+        }
+      });
+      return res
+        .status(statusCode.OK)
+        .send(util.success(statusCode.OK, responseMessage.DELETE_USER_SUCCESS));
+    } catch (err) {
+      console.log(err);
+      return res 
+        .status(statusCode.INTERNAL_SERVER_ERROR)
+        .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.DELETE_USER_FAIL));
+    }
+  },
+  updateUser : async (req, res) => {
+    const { email, password, newEmail, newName, newPassword } = req.body;
+    try {
+      const user = await User.findOne({
+        where: {
+          email: email,
+        }
+      });
 
-//   }
-// }
+      if(!user) {
+        console.log('존재하지 않는 사용자입니다.');
+        return res
+          .status(statusCode.BAD_REQUEST)
+          .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_USER));
+      }
+      const salt = user.salt;
+      const hashedPassword = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('base64');
+
+      if(user.password != hashedPassword) {
+        console.log('비밀번호가 일치하지 않습니다.');
+        return res
+          .status(statusCode.BAD_REQUEST)
+          .send(util.fail(statusCode.BAD_REQUEST, responseMessage.MISS_MATCH_PW));
+      }
+      const newSalt = crypto.randomBytes(64).toString('base64');
+      const newHashedPassword = crypto.pbkdf2Sync(newPassword, newSalt, 10000, 64, 'sha512').toString('base64');
+
+      const newUser = await User.update({ email: newEmail, password: newHashedPassword, userName: newName, salt: newSalt }, {
+          where: {
+            email: email,
+          }
+        }
+      );
+      return res
+        .status(statusCode.OK)
+        .send(util.success(statusCode.OK, responseMessage.UPDATE_USER_SUCCESS));
+    } catch (err) {
+      console.log(err);
+      return res
+        .status(statusCode.INTERNAL_SERVER_ERROR)
+        .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.UPDATE_USER_FAIL));
+    }
+  }
+}
