@@ -53,4 +53,22 @@ module.exports = {
         .send(ut.success(sc.INTERNAL_SERVER_ERROR, rm.CREATE_LIKE_FAIL));
     }
   },
+  deleteLike: async(req, res) => {
+    const postId = req.params.postId;
+    const userId = req.body.userId;
+    try {
+      Like.destroy({ where: {
+        postId: postId,
+        userId: userId,
+      }});
+      return res
+        .status(sc.OK)
+        .send(ut.success(sc.OK, rm.DELETE_LIKE_SUCCESS));
+    } catch (err) {
+      console.log(err);
+      return res
+        .status(sc.INTERNAL_SERVER_ERROR)
+        .send(ut.fail(sc.INTERNAL_SERVER_ERROR, rm.DELETE_LIKE_FAIL));
+    }
+  }
 }

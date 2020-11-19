@@ -5,7 +5,7 @@ const router = express.Router();
 const util = require('../modules/util');
 const responseMessage = require('../modules/responseMessage');
 const statusCode = require('../modules/statusCode');
-const { User } = require('../models');
+const { User, Post } = require('../models');
 const { userService } = require('../service');
 
 //컨트롤러에서 로직 처리
@@ -107,16 +107,23 @@ module.exports = {
         where : {
           id: id,
         },
-        attributes: ['id', 'email', 'userName'],
+        attributes: ['email', 'userName'],
       });
   
       if (!user) {
         console.log('존재하지 않는 아이디입니다.');
         return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_USER));
       }
-  
+      
+      const userPost = await Post.findOne({
+        where: {
+          userId: id,
+        }
+      });
+      const ans = { user, userPost };
+      
     //3. status:200 message: READ_USER_SUCCESS, id, email, userName 반환
-    return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.READ_USER_SUCCESS, user));
+    return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.READ_USER_SUCCESS, ans));
     } catch(error) {
       console.error(error);
       return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.READ_USER_ALL_FAIL));
