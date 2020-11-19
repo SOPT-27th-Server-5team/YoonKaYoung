@@ -128,5 +128,14 @@ module.exports = {
       console.error(error);
       return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.READ_USER_ALL_FAIL));
     }
-  }
-}
+  },
+//   deleteUser : async (req, res) => {
+//     const { userId } = req.params;
+//     try {
+//       const 
+//     }
+//   },
+//   updateUser : async (req, res) => {
+
+//   }
+// }

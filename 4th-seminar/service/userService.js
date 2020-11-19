@@ -4,12 +4,12 @@ const { User } = require('../models');
 module.exports = {
   readOneEmail: async ( email ) => {
     try {
-      const email = await User.findOne({
+      const useremail = await User.findOne({
         where: {
           email,
         }
       });
-      return email;
+      return useremail;
     } catch(err) {
       throw err;
     }
