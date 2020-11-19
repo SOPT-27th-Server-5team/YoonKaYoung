@@ -79,7 +79,7 @@ module.exports = {
         return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.OK, responseMessage.MISS_MATCH_PW));
       }
       //5. status: 200 ,message: SIGN_IN_SUCCESS, data: id, email, userName 반환
-      return res.status(statusCode.OK).send(util.success(statusCode.INTERNAL_SERVER_ERROR, responseMessage.SIGN_IN_SUCCESS  ));
+      return res.status(statusCode.OK).send(util.success(statusCode.INTERNAL_SERVER_ERROR, responseMessage.SIGN_IN_SUCCESS));
     } catch(error){
       console.error(error);
       return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.SIGN_IN_FAIL));
@@ -115,13 +115,13 @@ module.exports = {
         return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_USER));
       }
       
-      const userPost = await Post.findOne({
+      const userPost = await Post.findAll({
         where: {
           userId: id,
         }
       });
       const ans = { user, userPost };
-      
+
     //3. status:200 message: READ_USER_SUCCESS, id, email, userName 반환
     return res.status(statusCode.OK).send(util.success(statusCode.OK, responseMessage.READ_USER_SUCCESS, ans));
     } catch(error) {
