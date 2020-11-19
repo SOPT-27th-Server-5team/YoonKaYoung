@@ -130,11 +130,39 @@ module.exports = {
     }
   },
   deleteUser : async (req, res) => {
-    const { id } = req.params;
+    //요청 바디에 email과 password가 있어야 함
+    const { email, password } = req.body;
+    if(!email || !password) {
+      console.log('필요한 값이 없습니다!');
+      return res
+        .status(statusCode.BAD_REQUEST)
+        .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
+    }
     try {
+      //해당 user 찾기
+      const user = await User.findOne({
+        where: {
+          email: email,
+        }
+      });
+      if (!user) { //email이 존재하지 않을 경우
+        console.log('존재하지 않는 사용자입니다.');
+        return res
+          .status(statusCode.BAD_REQUEST)
+          .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_USER));
+      }
+      //비밀번호 검증하기
+      const inputPW = crypto.pbkdf2Sync(password, user.salt, 10000, 64, 'sha512').toString('base64');
+      if(inputPW != user.password) {
+        console.log('비밀번호가 일치하지 않습니다.');
+        return res
+          .status(statusCode.BAD_REQUEST)
+          .send(util.fail(statusCode.BAD_REQUEST, responseMessage.MISS_MATCH_PW));
+      }
+      //user 삭제하기
       await User.destroy({
         where: {
-          id : id,
+          email: email,
         }
       });
       return res
@@ -147,24 +175,33 @@ module.exports = {
         .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.DELETE_USER_FAIL));
     }
   },
+  //user 정보 수정하기
   updateUser : async (req, res) => {
+    //요청 바디에 { 원래메일, 원래비번, 새메일, 새이름, 새비번 } 이 있어야함
     const { email, password, newEmail, newName, newPassword } = req.body;
+    if(!email || !password || !newEmail || !newName || !newPassword) {
+      console.log('필요한 값이 없습니다!');
+      return res
+        .status(statusCode.BAD_REQUEST)
+        .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NULL_VALUE));
+    }
     try {
+      //해당 유저 찾기
       const user = await User.findOne({
         where: {
           email: email,
         }
       });
-
+      //유저가 조회되지 않았을 경우
       if(!user) {
         console.log('존재하지 않는 사용자입니다.');
         return res
           .status(statusCode.BAD_REQUEST)
           .send(util.fail(statusCode.BAD_REQUEST, responseMessage.NO_USER));
       }
+      //비밀번호 검증
       const salt = user.salt;
       const hashedPassword = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('base64');
-
       if(user.password != hashedPassword) {
         console.log('비밀번호가 일치하지 않습니다.');
         return res
