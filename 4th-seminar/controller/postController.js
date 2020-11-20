@@ -1,3 +1,4 @@
+const sequelize = require('sequelize');
 const ut = require('../modules/util');
 const rm = require('../modules/responseMessage');
 const sc = require('../modules/statusCode');
@@ -9,6 +10,12 @@ module.exports = {
     const postImageUrl = req.file.location;
     try {
       const user = await User.findOne({ id: userId }); //왜 where을 하면 안되는걸깜.
+      if(!user) {
+        console.log('해당 id를 가진 사용자가 존재하지 않습니다.');
+        return res
+          .status(sc.BAD_REQUEST)
+          .send(util.fail(sc.BAD_REQUEST, rm.CREATE_POST_FAIL));
+      }
       const post = await Post.create({ title, contents, postImageUrl });
       await user.addPost(post);
       return res.status(sc.OK).send(ut.success(sc.OK, rm.CREATE_POST_SUCCESS, post));

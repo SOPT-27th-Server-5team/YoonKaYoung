@@ -1,9 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('multer');
-const upload = multer({
-  dest: 'upload/'
-})
+const upload = require('../../modules/multer');
 
 router.post('/single', upload.single('image'), async (req, res) => {
   const image = req.file.location;
