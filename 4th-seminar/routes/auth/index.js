@@ -8,11 +8,11 @@ const TOKEN_EXPIRED = -3
 const TOKEN_INVALID = -2
 
 router.get('/', async (req, res) => {
-  const token = req.headers.jwt;
+  const token = req.headers.jwt; //요청헤더에 있는 jwt토큰을
   if (!token) {
     return res.json(ut.fail(sc.BAD_REQUEST, rm.EMPTY_TOKEN));
   }
-  const user = await jwt.verify(token);
+  const user = await jwt.verify(token); //jwt 메서드를 통해 디코딩한다.
   console.log(user);
   if (user === TOKEN_EXPIRED) {
     return res.status(sc.UNAUTHORIZED).send(ut.fail(sc.UNAUTHORIZED, rm.EXPIRED_TOKEN));

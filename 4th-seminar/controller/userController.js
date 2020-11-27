@@ -235,5 +235,21 @@ module.exports = {
         .status(statusCode.INTERNAL_SERVER_ERROR)
         .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.UPDATE_USER_FAIL));
     }
+  },
+  getProfile: async (req, res) => {
+    const { id } = req.decoded;
+    console.log(req.decoded);
+    try {
+      const user = await User.findOne({ where: { id }, attributes: ['id', 'userName', 'email'] });
+      return res
+        .status(statusCode.OK)
+        .send(util.success(statusCode.OK, responseMessage.AUTH_SUCCESS, user));
+    } catch (err) {
+      console.log(err);
+      return res
+        .status(statusCode.INTERNAL_SERVER_ERROR)
+        .send(util.fail(statusCode.INTERNAL_SERVER_ERROR, responseMessage.INVALID_TOKEN))
+    }
   }
+
 }
