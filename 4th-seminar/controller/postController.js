@@ -40,7 +40,7 @@ module.exports = {
       });
       return res
         .status(sc.OK)
-        .send(ut.success(sc.OK, rm.READ_POST_ALL_SUCCESS), posts);
+        .send(ut.success(sc.OK, rm.READ_POST_ALL_SUCCESS, posts));
     } catch (err) {
       console.log(JSON.stringify(posts, null, 2));
       return res
