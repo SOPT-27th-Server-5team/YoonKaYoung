@@ -28,7 +28,7 @@ module.exports = {
     try {
       const posts = await Post.findAll({
         group: 'id',
-        attributes: ['title', 'contents', [sequelize.fn("COUNT", "Liker.Like.PostId"), 'likeCnt']],
+        attributes: ['id', 'title', 'contents', [sequelize.fn("COUNT", "Liker.Like.PostId"), 'likeCnt']],
         include: [{
           model: User,
           attributes: ['id', 'userName', 'email'],
