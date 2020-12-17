@@ -28,5 +28,16 @@ module.exports = {
     } catch (err) {
       throw err;
     }
+  },
+  updateRefreshToken: async (id, refreshToken) => {
+    try {
+      const user = await User.update(
+        { refreshToken },
+        { where: { id }}
+      );
+      return user;
+    } catch (err) {
+      throw err;
+    }
   }
 }

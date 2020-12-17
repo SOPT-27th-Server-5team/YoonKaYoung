@@ -1,29 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const ut = require('../../modules/util');
-const sc = require('../../modules/statusCode');
-const rm = require('../../modules/responseMessage');
-const jwt = require('../../modules/jwt');
-const TOKEN_EXPIRED = -3
-const TOKEN_INVALID = -2
+const authController = require('../../controller/authController');
 
-router.get('/', async (req, res) => {
-  const token = req.headers.jwt; //요청헤더에 있는 jwt토큰을
-  if (!token) {
-    return res.json(ut.fail(sc.BAD_REQUEST, rm.EMPTY_TOKEN));
-  }
-  const user = await jwt.verify(token); //jwt 메서드를 통해 디코딩한다.
-  console.log(user);
-  if (user === TOKEN_EXPIRED) {
-    return res.status(sc.UNAUTHORIZED).send(ut.fail(sc.UNAUTHORIZED, rm.EXPIRED_TOKEN));
-  }
-  if (user === TOKEN_INVALID) {
-    return res.status(sc.UNAUTHORIZED).send(ut.fail(sc.UNAUTHORIZED, rm.INVALID_TOKEN));
-  }
-  if (user.id === undefined) {
-    return res.status(sc.UNAUTHORIZED).send(ut.fail(sc.UNAUTHORIZED, rm.INVALID_TOKEN));
-  }
-  return res.status(sc.OK).send(ut.fail(sc.OK, rm.AUTH_SUCCESS));
-});
+router.get('/', authController.verifyJwt);
+router.get('/newToken', authController.reIssueJwt);
 
 module.exports = router;
